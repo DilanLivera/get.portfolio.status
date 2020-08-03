@@ -5,9 +5,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Post.Portfolio.Status.To.Slack
 {
-    public static class Function1
+    public static class PostPortfolioStatusToSlack
     {
-        [FunctionName("Function1")]
+        [FunctionName("PostPortfolioStatusToSlack")]
         public static void Run([TimerTrigger("* * 9 * * 6")]TimerInfo myTimer, ILogger log)
         {
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
