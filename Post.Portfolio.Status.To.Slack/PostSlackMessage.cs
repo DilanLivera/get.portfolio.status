@@ -18,7 +18,7 @@ namespace Post.Portfolio.Status.To.Slack
         private static string Uri = "/services/T018347L5QQ/B017KBF94TH/HvqdJ8AZFN7VaGOuQ0sUZTaj";
 
         [FunctionName("PostSlackMessage")]
-        public static async Task RunAsync([TimerTrigger("*/5 * * * *")] TimerInfo myTimer, ILogger log)
+        public static async Task RunAsync([TimerTrigger("0 9 * * *")] TimerInfo myTimer, ILogger log)
         {
             var slackMessage = new Dictionary<string, List<Section>>
             {
