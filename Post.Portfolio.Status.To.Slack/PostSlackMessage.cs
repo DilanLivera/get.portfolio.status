@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Post.Portfolio.Status.To.Slack
 {
-    public static class PostPortfolioStatusToSlack
+    public static class PostSlackMessage
     {
         private static HttpClient _httpClient = new HttpClient
         {
@@ -18,10 +17,8 @@ namespace Post.Portfolio.Status.To.Slack
 
         private static string Uri = "/services/T018347L5QQ/B017KBF94TH/HvqdJ8AZFN7VaGOuQ0sUZTaj";
 
-        [FunctionName("PostPortfolioStatusToSlack")]
-        public static async Task<IActionResult> RunAsync(
-            [TimerTrigger("* * 9 * * 6")] TimerInfo myTimer, 
-            ILogger log)
+        [FunctionName("PostSlackMessage")]
+        public static async Task RunAsync([TimerTrigger("*/5 * * * *")] TimerInfo myTimer, ILogger log)
         {
             var slackMessage = new Dictionary<string, List<Section>>
             {
@@ -48,7 +45,8 @@ namespace Post.Portfolio.Status.To.Slack
 
             var postResponse = await _httpClient.SendAsync(request);
 
-            return new OkObjectResult(postResponse.StatusCode);
+            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+            log.LogInformation($"Slack returned status code: {postResponse.StatusCode}");
         }
     }
 }
