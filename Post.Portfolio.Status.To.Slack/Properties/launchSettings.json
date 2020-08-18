@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "Post.Portfolio.Status.To.Slack": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "httpPort": 31744,
+      "useSSL": false
+    }
+  }
+}

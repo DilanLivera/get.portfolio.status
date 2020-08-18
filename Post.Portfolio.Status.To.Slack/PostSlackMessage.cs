@@ -1,4 +1,8 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -10,16 +14,22 @@ namespace Post.Portfolio.Status.To.Slack
 {
     public static class PostSlackMessage
     {
-        private static HttpClient _httpClient = new HttpClient
+        private static HttpClient _slackClient = new HttpClient
         {
             BaseAddress = new Uri("https://hooks.slack.com")
         };
 
-        private static string Uri = "/services/T018347L5QQ/B017KBF94TH/HvqdJ8AZFN7VaGOuQ0sUZTaj";
-
         [FunctionName("PostSlackMessage")]
-        public static async Task RunAsync([TimerTrigger("0 9 * * *")] TimerInfo myTimer, ILogger log)
+        public static async Task<IActionResult> Run(
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+            ILogger log)
         {
+            var config = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
+                .Build();
+
+            var slackUri = config["SLACKURI"];
+
             var slackMessage = new Dictionary<string, List<Section>>
             {
                 {
@@ -38,15 +48,17 @@ namespace Post.Portfolio.Status.To.Slack
                 }
             };
 
-            var request = new HttpRequestMessage(HttpMethod.Post, Uri)
+            var request = new HttpRequestMessage(HttpMethod.Post, slackUri)
             {
                 Content = JsonContent.Create(slackMessage)
             };
 
-            var postResponse = await _httpClient.SendAsync(request);
+            var postResponse = await _slackClient.SendAsync(request);
 
             log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
             log.LogInformation($"Slack returned status code: {postResponse.StatusCode}");
+
+            return new OkObjectResult(postResponse.StatusCode);
         }
     }
 }
